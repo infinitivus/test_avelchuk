@@ -1,0 +1,8 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+GET         /                    controllers.PersonController.login(request: Request)
+POST        /login               controllers.PersonController.checkPerson(request: Request)
+POST        /registration        controllers.PersonController.registrationPerson(request: Request)
+GET        /authorisation        controllers.PersonController.authorisationPerson(request:Request)

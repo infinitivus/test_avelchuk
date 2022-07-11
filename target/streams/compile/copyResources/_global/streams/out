@@ -1,0 +1,6 @@
+[debug] Copy resource mappings: 
+[debug] 	(C:\MY_PROJECT\test_avelchuk_a\conf\application.conf,C:\MY_PROJECT\test_avelchuk_a\target\scala-2.13\classes\application.conf)
+[debug] 	(C:\MY_PROJECT\test_avelchuk_a\conf\logback.xml,C:\MY_PROJECT\test_avelchuk_a\target\scala-2.13\classes\logback.xml)
+[debug] 	(C:\MY_PROJECT\test_avelchuk_a\conf\routes,C:\MY_PROJECT\test_avelchuk_a\target\scala-2.13\classes\routes)
+[debug] 	(C:\MY_PROJECT\test_avelchuk_a\conf\META-INF\persistence.xml,C:\MY_PROJECT\test_avelchuk_a\target\scala-2.13\classes\META-INF\persistence.xml)
+[debug] 	(C:\MY_PROJECT\test_avelchuk_a\conf\evolutions\default\1.sql,C:\MY_PROJECT\test_avelchuk_a\target\scala-2.13\classes\evolutions\default\1.sql)
