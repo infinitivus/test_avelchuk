@@ -1,35 +1,11 @@
-
-@*    <form id="login">*@
-@*        <h1>Форма входа</h1>*@
-@*        <fieldset id="inputs">*@
-@*            <input id="username" type="text" placeholder="Логин" autofocus required>*@
-@*            <input id="password" type="password" placeholder="Пароль" required>*@
-@*        </fieldset>*@
-@*        <fieldset id="action">*@
-@*            <button autofocus   action="http://localhost:9000/login">Вход</button>*@
-@*            <button  type="" action="@routes.PersonController.registrationPerson">Регистрация</button>*@
-@*        </fieldset>*@
-@*    </form>*@
-
-
 @import play.mvc.Http.Request
 
+@(form: Form[PersonData])(implicit request: Request, messages: play.i18n.Messages)
 
-@( form: Form[PersonData])(implicit request: Request, messages: play.i18n.Messages)
-
-@helper.form(routes.PersonController.checkPerson()) {
-    @helper.CSRF.formField
-       @helper.inputText(form("email"))
-        @helper.inputText(form("password"))
-
-   <button type="submit">Login</button >
-
-}
-
-      @helper.form(routes.PersonController.registrationPerson()) {
-            @helper.CSRF.formField
-   @helper.inputText(form("email"))
+<form name="PersonData" method="post">
+    @helper.CSRF.formField  <!-- This auto-generates a token for you -->
+    @helper.inputText(form("email"))
     @helper.inputText(form("password"))
-        <button type="submit">Registration</button>
-}
-
+    <button autofocus type="submit" formaction="/login" >Вход</button>
+    <button type="submit" formaction="/registration">Регистрация</button>
+    </form>
