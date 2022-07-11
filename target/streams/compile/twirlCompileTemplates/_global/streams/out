@@ -1,0 +1,3 @@
+[error] [Error] C:\MY_PROJECT\test_avelchuk\app\views\login.scala.html:27
+[error]     <button  type="submit" action="http://localhost:9000/registration">Регистрация</button>*@: Invalid '@' symbol
+[error] (Compile / twirlCompileTemplates) Twirl compilation failed

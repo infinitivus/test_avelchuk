@@ -5,7 +5,7 @@
 <form name="PersonData" method="post">
     @helper.CSRF.formField  <!-- This auto-generates a token for you -->
     @helper.inputText(form("email"))
-    @helper.inputText(form("password"))
+    @helper.inputPassword(form("password"))
     <button autofocus type="submit" formaction="/login" >Вход</button>
     <button type="submit" formaction="/registration">Регистрация</button>
     </form>
