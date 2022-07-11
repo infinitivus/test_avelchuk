@@ -21,13 +21,11 @@ public class PersonController extends Controller {
     private final IPersonService service;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-
     @Inject
     public PersonController(FormFactory formFactory, MessagesApi messagesApi, IPersonService service) {
         this.form = formFactory.form(PersonData.class);
         this.messagesApi = messagesApi;
         this.service = service;
-
     }
 
     // GET  Контроллер страницы с формой ввода емайла, пароля и кнопками
@@ -38,19 +36,19 @@ public class PersonController extends Controller {
     // POST  Контроллер обработки данных полученных с начальной страницы по нажатиб кнопки вход
     public Result checkPerson(Http.Request checkRequest) {
         final Form<PersonData> boundForm = form.bindFromRequest(checkRequest);
-        if (errorInput(boundForm)) {                                                                 // проверка на ошибку ввода информации
+        if (errorInput(boundForm)) {
             return badRequest(views.html.login.render(boundForm, checkRequest, messagesApi.preferred(checkRequest)));
         } else {
             PersonData data = boundForm.get();
-            int numRecord = service.checkDuplicationEmail(data.getEmail());                          // получение номера записи,если она есть +
+            int numRecord = service.checkDuplicationEmail(data.getEmail());
             String passwordEncoder = service.encodingPassword(data.getPassword());
-            if (numRecord >= 0 && service.checkPassword(passwordEncoder, numRecord)) {               //сравнение введенного емайла и пароля с данными +
-                boolean authorisation = service.getAuthorisation(numRecord);                           //получение данных о авторизации пользователя
+            if (numRecord >= 0 && service.checkPassword(passwordEncoder, numRecord)) {
+                boolean authorisation = service.getAuthorisation(numRecord);
                 return ok(Html.apply("<h3>Пользователь:" + data.getEmail() +
                         "<br>Авторизация: " + authorisation + "</h3>"
-                        + "<button onclick=\"window.location.href = 'http://localhost:9000/';\">Выход</button>")); // вернуть  страницу с емаил, статусом авторизации и кнопкой выход (main)
+                        + "<button onclick=\"window.location.href = 'http://localhost:9000/';\">Выход</button>"));
             } else {
-                return badRequest(views.html.login.render(boundForm, checkRequest, messagesApi.preferred(checkRequest))); // вернуть страницу аутентификации с сообщением что нет
+                return badRequest(views.html.login.render(boundForm, checkRequest, messagesApi.preferred(checkRequest)));
             }
         }
     }
@@ -58,17 +56,17 @@ public class PersonController extends Controller {
     // POST  Контроллер обработки данных полученных с начальной страницы по нажатию кнопки регистрация
     public Result registrationPerson(Http.Request regRequest) {
         final Form<PersonData> boundForm = form.bindFromRequest(regRequest);
-        if (errorInput(boundForm)) {                                                                            // проверка на ошибку ввода информации
+        if (errorInput(boundForm)) {
             return badRequest(views.html.login.render(boundForm, regRequest, messagesApi.preferred(regRequest)));
         } else {
             if (service.checkDuplicationEmail(boundForm.get().getEmail()) >= 0) {
-                return redirect(routes.PersonController.login()).flashing("info", "Widget added!");               // возвращаем на страницу аутентификации с ошибкой "такой емайл уже есть"
+                return redirect(routes.PersonController.login());
             } else {
                 PersonData data = boundForm.get();
-                service.savePerson(data);// записать пользователя
-                service.sendMessageEmailRegistration(data.getEmail(), service.encodingPassword(data.getPassword()));  // отправить пользователю письмо для авторизации
+                service.savePerson(data);
+                service.sendMessageEmailRegistration(data.getEmail(), service.encodingPassword(data.getPassword()));
                 return ok(Html.apply("<h3>Пользователь зарегистрирован:" + data.getEmail() + "<br>Авторизация: False <br>Для авторизации пройдите по ссылке на почте </h3>"
-                        + "<button onclick=\"window.location.href = 'http://localhost:9000/';\">Выход</button>")); // вернуть  страницу с емаил, статусом авторизации и кнопкой выход (main)
+                        + "<button onclick=\"window.location.href = 'http://localhost:9000/';\">Выход</button>"));
             }
         }
     }
