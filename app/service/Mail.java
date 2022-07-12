@@ -11,8 +11,8 @@ public class Mail implements IEmail {
     @Override
     public void sendMessageEmailRegistration(String emailTo,String password) { // отправляем письмо на email(необходимо выключить антивирус и брандмауер
 
-        final String from = "aals@ya.ru";
-        final String pass = "21Alex7";
+        final String from = "email"; // record a real name from yandex mail
+        final String pass = "password"; // record a real passport from yandex mail
         final String host = "smtp.yandex.ru";
 
         Properties props = new Properties();
