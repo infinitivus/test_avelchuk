@@ -21,25 +21,46 @@ public class PersonService implements IPersonService {
         this.mail = mail;
     }
 
-    // проверка совпадения паролей +
     @Override
-    public boolean checkPassword(String password, int numRecord) {
-        return password.equals(repository.getPerson(numRecord).getPassword());
+    public Person checkAuthentication(PersonData data) {
+        int numRecord = repository.checkEmail(data.getEmail());
+        if (numRecord >= 0) {
+            Person person = repository.getPerson(numRecord);
+            String passwordEncoder = encodingPassword(data.getPassword());
+            if (passwordEncoder.equals(person.getPassword())) {
+                return person;
+            }
+        }
+        return null;
     }
 
-    //проверка наличия емайла  +
     @Override
-    public int checkDuplicationEmail(String email) {
-        return repository.checkEmail(email);
+    public boolean registration(PersonData data) {
+        if (repository.checkEmail(data.getEmail()) >= 0) {
+            return false;
+        } else {
+            if (mail.sendMessageEmailRegistration(data.getEmail(), encodingPassword(data.getPassword()))) {
+                savePerson(data);
+                return true;
+            }
+        }
+        return false;
     }
 
-    // изменение авторизации на true +
     @Override
-    public void setAuthorisation(PersonData data, Integer numRecord) {
-        repository.updateAuthPerson(data, numRecord);
+    public Person authorisation(PersonData data) {
+        int numRecord = repository.checkEmail(data.getEmail());
+        if (numRecord >= 0) {
+            Person person = repository.getPerson(numRecord);
+            if (data.getPassword().equals(person.getPassword())) {
+                repository.updateAuthPerson(data, numRecord);
+                return person;
+            }
+        }
+        return null;
     }
 
-    // кодирование пароля +
+@Override
     public String encodingPassword(String password) {
         byte[] digest = new byte[0];
         try {
@@ -52,21 +73,8 @@ public class PersonService implements IPersonService {
         return DatatypeConverter.printHexBinary(digest);
     }
 
-    // Запись пользователя  +
     @Override
     public void savePerson(PersonData data) {
         repository.save(new Person(data.getEmail(), encodingPassword(data.getPassword()), false));
-    }
-
-    // отправка сообщения о регистрации на почту пользователю
-    @Override
-    public void sendMessageEmailRegistration(String email, String pass) {
-        mail.sendMessageEmailRegistration(email, pass);
-    }
-
-    // Получение статуса авторизации
-    @Override
-    public boolean getAuthorisation(Integer numRecord) {
-        return repository.getPerson(numRecord).getAuthorisation();
     }
 }

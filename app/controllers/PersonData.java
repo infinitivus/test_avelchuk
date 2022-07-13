@@ -4,10 +4,10 @@ import play.data.validation.Constraints;
 
  public class PersonData {
 
-    @Constraints.Pattern("^([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})$") // Проверка правильности почты
+    @Constraints.Pattern("^([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})$")
     private String email;
 
-   @Constraints.MinLength(6) // Проверка длинны пароля
+   @Constraints.MinLength(6)
    private String password;
 
     public PersonData() {

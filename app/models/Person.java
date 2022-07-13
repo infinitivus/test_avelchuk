@@ -2,27 +2,27 @@ package models;
 
 import io.ebean.Model;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name="persons")
 public class Person extends Model {
 
-    @Id
-    @Column(name="id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name="emals")
+
     private String email;
-    @Column(name="passwords")
+
     private String password;
-    @Column(name="authorisations")
+
     private boolean authorisation;
 
     public Person() {
     }
 
     public Person(String email, String password, boolean authorisation) {
+        this.email = email;
+        this.password = password;
+        this.authorisation = authorisation;
+    }
+
+    public Person(Integer id, String email, String password, boolean authorisation) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.authorisation = authorisation;

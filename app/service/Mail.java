@@ -9,10 +9,10 @@ import javax.mail.internet.MimeMessage;
 public class Mail implements IEmail {
 
     @Override
-    public void sendMessageEmailRegistration(String emailTo,String password) { // отправляем письмо на email(необходимо выключить антивирус и брандмауер
+    public boolean sendMessageEmailRegistration(String emailTo, String password) { // отправляем письмо на email(необходимо выключить антивирус и брандмауер
 
-        final String from = "aals@ya.ru";
-        final String pass = "21Alex7";
+        final String from = "email"; // record a real name from yandex mail
+        final String pass = "password"; // record a real passport from yandex mail
         final String host = "smtp.yandex.ru";
 
         Properties props = new Properties();
@@ -36,12 +36,15 @@ public class Mail implements IEmail {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
             message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(emailTo)); // Адрес получателя
+                    InternetAddress.parse(emailTo));
             message.setSubject("Письмо авторизации");
-            message.setContent("<h3>Привет! Пожалуйста авторизируйтесь кликнув по ссылке</h3><a href=http://localhost:9000/authorisation?email="+emailTo+"&password="+password, "text/html; charset=utf-8");
+            message.setContent("<h3>Пожалуйста авторизируйтесь кликнув по ссылке</h3>" +
+                    "<a href=http://localhost:9000/authorisation?email=" +
+                    emailTo + "&password=" + password, "text/html; charset=utf-8");
             Transport.send(message);
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            return false;
         }
+        return true;
     }
 }

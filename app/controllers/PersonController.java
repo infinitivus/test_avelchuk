@@ -1,5 +1,6 @@
 package controllers;
 
+import models.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.data.Form;
@@ -40,13 +41,11 @@ public class PersonController extends Controller {
             return badRequest(views.html.login.render(boundForm, checkRequest, messagesApi.preferred(checkRequest)));
         } else {
             PersonData data = boundForm.get();
-            int numRecord = service.checkDuplicationEmail(data.getEmail());
-            String passwordEncoder = service.encodingPassword(data.getPassword());
-            if (numRecord >= 0 && service.checkPassword(passwordEncoder, numRecord)) {
-                boolean authorisation = service.getAuthorisation(numRecord);
-                return ok(Html.apply("<h3>Пользователь:" + data.getEmail() +
-                        "<br>Авторизация: " + authorisation + "</h3>"
-                        + "<button onclick=\"window.location.href = 'http://localhost:9000/';\">Выход</button>"));
+            Person per = service.checkAuthentication(data);
+            if (!(per == null)) {
+                return ok(Html.apply("<h3>Пользователь:" + per.getEmail() +
+                        "<br>Авторизация: " + per.getAuthorisation() + "</h3>"
+                        + "<br><button onclick=\"window.location.href = 'http://localhost:9000/';\">Выход</button>"));
             } else {
                 return badRequest(views.html.login.render(boundForm, checkRequest, messagesApi.preferred(checkRequest)));
             }
@@ -59,14 +58,15 @@ public class PersonController extends Controller {
         if (errorInput(boundForm)) {
             return badRequest(views.html.login.render(boundForm, regRequest, messagesApi.preferred(regRequest)));
         } else {
-            if (service.checkDuplicationEmail(boundForm.get().getEmail()) >= 0) {
-                return redirect(routes.PersonController.login());
+            PersonData data = boundForm.get();
+            if (service.registration(data)) {
+                return ok(Html.apply("<h3>Пользователь зарегистрирован:" + data.getEmail() +
+                        "<br>Авторизация: False <br>Для авторизации пройдите по ссылке на почте </h3>"
+                        + "<br><button onclick=\"window.location.href = 'http://localhost:9000/';\">Выход</button>"));
             } else {
-                PersonData data = boundForm.get();
-                service.savePerson(data);
-                service.sendMessageEmailRegistration(data.getEmail(), service.encodingPassword(data.getPassword()));
-                return ok(Html.apply("<h3>Пользователь зарегистрирован:" + data.getEmail() + "<br>Авторизация: False <br>Для авторизации пройдите по ссылке на почте </h3>"
-                        + "<button onclick=\"window.location.href = 'http://localhost:9000/';\">Выход</button>"));
+                return ok(Html.apply("<h3>Ошибка регистрации пользователя " + data.getEmail()
+                        + "<br>Такой пользователь уже существует или невозможно отправить ссылку на авторизацию<h3>"
+                        + "<br><button onclick=\"window.location.href = 'http://localhost:9000/';\">Выход</button>"));
             }
         }
     }
@@ -75,15 +75,14 @@ public class PersonController extends Controller {
     public Result authorisationPerson(Http.Request authRequest) {
         final Form<PersonData> boundForm = form.bindFromRequest(authRequest);
         PersonData data = boundForm.get();
-        int numRecord = service.checkDuplicationEmail(data.getEmail());
-        if (numRecord >= 0 && service.checkPassword(data.getPassword(), numRecord)) {
-            service.setAuthorisation(data, numRecord);
-            return ok(Html.apply("<h3>Пользователь:" + data.getEmail() +
-                    "<br>Авторизация: Авторизирован/h3>"
+        Person per = service.authorisation(data);
+        if (per != null) {
+            return ok(Html.apply("<h3>Пользователь:" + per.getEmail() +
+                    "<br>Авторизация:" + per.getAuthorisation() + "/h3>"
                     + "<button onclick=\"window.location.href = 'http://localhost:9000/';\">Выход</button>"));
-        } else {
-            return badRequest(views.html.login.render(boundForm, authRequest, messagesApi.preferred(authRequest)));
         }
+            return badRequest(views.html.login.render(boundForm, authRequest,
+                    messagesApi.preferred(authRequest)));
     }
 
     // проверка на правильность ввода данных пользователем

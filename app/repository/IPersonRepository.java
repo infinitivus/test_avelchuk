@@ -7,9 +7,9 @@ import models.Person;
 @ImplementedBy(ListPersonRepository.class)
 public interface IPersonRepository {
 
-    public void updateAuthPerson(PersonData data, Integer numRecord);
+    void save(Person person);
 
-    public void save(Person person);
+    public void updateAuthPerson(PersonData data, Integer numRecord);
 
     public int checkEmail(String email);
 
